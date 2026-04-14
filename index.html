@@ -3,69 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <title>Матрица судьбы</title>
+
 <style>
 body {
   margin: 0;
   background: #1c1c1e;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* fullscreen app */
 .iphone {
-  width: 375px;
-  height: 812px;
+  width: 100%;
+  height: 100vh;
   background: #f2f2f7;
-  border-radius: 50px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  position: relative;
+  overflow: auto;
 }
 
-.notch {
-  width: 160px;
-  height: 30px;
-  background: black;
-  border-radius: 20px;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
+/* status bar */
 .status-bar {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  padding: 15px 20px;
   font-size: 14px;
 }
 
+/* content */
 .app {
   padding: 20px;
 }
 
 h1 {
   text-align: center;
-  font-size: 22px;
 }
 
+/* cards */
 .card {
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.9);
   padding: 15px;
   border-radius: 18px;
   margin-top: 15px;
 }
 
+/* input */
 input {
   width: 100%;
   padding: 12px;
   border-radius: 12px;
   border: none;
   margin-top: 10px;
+  font-size: 16px;
 }
 
+/* button */
 button {
   width: 100%;
   padding: 14px;
@@ -74,8 +63,10 @@ button {
   color: white;
   border: none;
   border-radius: 14px;
+  font-size: 16px;
 }
 
+/* result */
 .hidden {
   display: none;
 }
@@ -83,8 +74,10 @@ button {
 .big-number {
   font-size: 50px;
   text-align: center;
+  font-weight: bold;
 }
 
+/* matrix */
 .matrix {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -97,16 +90,21 @@ button {
   border-radius: 12px;
   text-align: center;
 }
+
+/* meanings */
+.meaning {
+  margin-top: 10px;
+  font-size: 14px;
+}
 </style>
 </head>
 
 <body>
 
 <div class="iphone">
-  <div class="notch"></div>
 
   <div class="status-bar">
-    <span>9:41</span>
+    <span id="time"></span>
     <span>📶 🔋</span>
   </div>
 
@@ -115,26 +113,79 @@ button {
 
     <div class="card">
       <label>Дата рождения</label>
-      <input id="dateInput" placeholder="ДД.ММ.ГГГГ">
+      <input id="dateInput" placeholder="ДД.ММ.ГГГГ" maxlength="10">
     </div>
 
     <button id="calcBtn">Рассчитать</button>
 
     <div id="result" class="hidden">
+
       <div class="card">
+        <h3>Число судьбы</h3>
         <div class="big-number" id="destiny"></div>
+        <div class="meaning" id="destinyMeaning"></div>
       </div>
 
       <div class="card">
+        <h3>Матрица</h3>
         <div class="matrix" id="matrix"></div>
       </div>
+
     </div>
+
   </div>
 </div>
 
 <script>
-document.getElementById("calcBtn").addEventListener("click", calculate);
 
+// 🔥 время как на iPhone
+function updateTime() {
+  const now = new Date();
+  const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  document.getElementById("time").innerText = time;
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// 🔥 автоформат даты
+const input = document.getElementById("dateInput");
+
+input.addEventListener("input", (e) => {
+  let v = e.target.value.replace(/\D/g, "");
+
+  if (v.length > 2) v = v.slice(0,2) + "." + v.slice(2);
+  if (v.length > 5) v = v.slice(0,5) + "." + v.slice(5,9);
+
+  e.target.value = v;
+});
+
+// 🔢 значения (расшифровка)
+const meanings = {
+  1: "Лидерство, сила воли",
+  2: "Интуиция, чувствительность",
+  3: "Творчество, самовыражение",
+  4: "Стабильность, труд",
+  5: "Свобода, перемены",
+  6: "Любовь, семья",
+  7: "Духовность, поиск истины",
+  8: "Сила, деньги, контроль",
+  9: "Мудрость, завершение",
+  10: "Удача, поток",
+  11: "Сила духа",
+  12: "Жертвенность",
+  13: "Трансформация",
+  14: "Баланс",
+  15: "Искушение",
+  16: "Разрушение старого",
+  17: "Надежда",
+  18: "Подсознание",
+  19: "Успех",
+  20: "Пробуждение",
+  21: "Завершение",
+  22: "Свобода души"
+};
+
+// уменьшение
 function reduceTo22(num) {
   while (num > 22) {
     num = num.toString().split("").reduce((s, d) => s + +d, 0);
@@ -142,25 +193,26 @@ function reduceTo22(num) {
   return num;
 }
 
-function calculate() {
-  const date = document.getElementById("dateInput").value;
+// расчёт
+document.getElementById("calcBtn").addEventListener("click", () => {
+
+  const date = input.value;
   const parts = date.split(".");
 
   if (parts.length !== 3) {
-    alert("Введите дату ДД.ММ.ГГГГ");
+    alert("Введите дату правильно");
     return;
   }
 
-  const day = +parts[0];
-  const month = +parts[1];
-  const year = +parts[2];
+  const d = reduceTo22(+parts[0]);
+  const m = reduceTo22(+parts[1]);
+  const y = reduceTo22(+parts[2]);
 
-  const d = reduceTo22(day);
-  const m = reduceTo22(month);
-  const y = reduceTo22(year);
   const destiny = reduceTo22(d + m + y);
 
   document.getElementById("destiny").innerText = destiny;
+  document.getElementById("destinyMeaning").innerText =
+    meanings[destiny] || "Описание отсутствует";
 
   const matrix = [d, m, y, destiny];
 
@@ -169,12 +221,14 @@ function calculate() {
 
   matrix.forEach(n => {
     const div = document.createElement("div");
-    div.innerText = n;
+    div.innerHTML = `<b>${n}</b><br><small>${meanings[n] || ""}</small>`;
     box.appendChild(div);
   });
 
   document.getElementById("result").classList.remove("hidden");
-}
+
+});
+
 </script>
 
 </body>
