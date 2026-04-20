@@ -5,6 +5,10 @@
 <title>Матрица судьбы PRO</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, sans-serif;
@@ -14,6 +18,8 @@ body {
 
 .app {
   padding: 20px;
+  max-width: 420px;
+  margin: auto;
 }
 
 h1 {
@@ -26,13 +32,21 @@ input, button {
   border-radius: 14px;
   border: none;
   margin-top: 10px;
+  font-size: 16px;
+}
+
+input {
+  background: #1c1c1e;
+  color: white;
 }
 
 button {
   background: #007aff;
   color: white;
+  font-weight: bold;
 }
 
+/* круг */
 .circle {
   position: relative;
   width: 260px;
@@ -54,6 +68,7 @@ button {
   font-weight: bold;
 }
 
+/* карточки */
 .card {
   background: #1c1c1e;
   padding: 15px;
@@ -61,9 +76,11 @@ button {
   margin-top: 15px;
 }
 
-.plus {color:#4cd964;}
-.minus {color:#ff3b30;}
-.hidden {display:none;}
+.plus { color: #4cd964; }
+.minus { color: #ff3b30; }
+
+.hidden { display: none; }
+
 </style>
 </head>
 
@@ -73,45 +90,52 @@ button {
 
 <h1>Матрица судьбы</h1>
 
-<input id="date" placeholder="ДД.ММ.ГГГГ">
-<button onclick="calc()">Рассчитать</button>
+<input id="dateInput" placeholder="ДД.ММ.ГГГГ">
+<button id="calcBtn">Рассчитать</button>
 
 <div id="matrix" class="circle hidden"></div>
-
 <div id="info"></div>
 
 </div>
 
 <script>
 
-// автоформат
-date.oninput=e=>{
- let v=e.target.value.replace(/\D/g,"");
- if(v.length>2)v=v.slice(0,2)+"."+v.slice(2);
- if(v.length>5)v=v.slice(0,5)+"."+v.slice(5,9);
- e.target.value=v;
-};
+// элементы
+const input = document.getElementById("dateInput");
+const button = document.getElementById("calcBtn");
+const matrix = document.getElementById("matrix");
+const info = document.getElementById("info");
+
+// автоформат даты
+input.addEventListener("input", (e) => {
+  let v = e.target.value.replace(/\D/g, "");
+
+  if (v.length > 2) v = v.slice(0, 2) + "." + v.slice(2);
+  if (v.length > 5) v = v.slice(0, 5) + "." + v.slice(5, 9);
+
+  e.target.value = v;
+});
 
 // арканы
-const A={
-1:["Маг","Инициатива","Манипуляции"],
-2:["Жрица","Интуиция","Страх"],
-3:["Императрица","Изобилие","Лень"],
-4:["Император","Сила","Контроль"],
-5:["Иерофант","Знания","Догмы"],
-6:["Любовь","Гармония","Зависимость"],
-7:["Колесница","Движение","Агрессия"],
-8:["Баланс","Справедливость","Критика"],
+const A = {
+1:["Маг","Инициатива, лидерство","Манипуляции, эго"],
+2:["Жрица","Интуиция, глубина","Страхи, закрытость"],
+3:["Императрица","Изобилие, творчество","Лень, излишества"],
+4:["Император","Структура, власть","Контроль, жесткость"],
+5:["Иерофант","Знания, духовность","Догматизм"],
+6:["Влюбленные","Любовь, гармония","Зависимость"],
+7:["Колесница","Движение, победа","Агрессия"],
+8:["Справедливость","Баланс","Критика"],
 9:["Отшельник","Мудрость","Одиночество"],
-10:["Фортуна","Удача","Хаос"],
+10:["Фортуна","Удача","Нестабильность"],
 11:["Сила","Энергия","Гнев"],
-12:["Жертва","Рост","Застой"],
-13:["Трансформация","Обновление","Страх"],
-14:["Баланс","Гармония","Пассивность"],
-15:["Деньги","Сила","Зависимости"],
-16:["Кризис","Перезапуск","Разрушение"],
-17:["Звезда","Мечта","Иллюзии"],
-18:["Луна","Интуиция","Тревога"],
+12:["Повешенный","Переосмысление","Жертва"],
+13:["Смерть","Трансформация","Страх перемен"],
+14:["Умеренность","Гармония","Пассивность"],
+15:["Дьявол","Деньги, сила","Зависимости"],
+16:["Башня","Перезапуск","Кризис"],
+17:["Звезда","Надежда","Иллюзии"],
+18:["Луна","Интуиция","Тревоги"],
 19:["Солнце","Успех","Эго"],
 20:["Суд","Пробуждение","Страх"],
 21:["Мир","Завершение","Застой"],
@@ -119,35 +143,79 @@ const A={
 };
 
 // редукция
-function r(n){
- while(n>22)n=[...n+""].reduce((a,b)=>a+ +b,0);
- return n;
+function reduce(n){
+  while(n > 22){
+    n = n.toString().split("").reduce((a,b)=>a + +b, 0);
+  }
+  return n;
 }
 
 // расчёт
-function calc(){
+button.addEventListener("click", () => {
 
- let p=date.value.split(".");
- if(p.length!=3){alert("Введите дату");return;}
+  const date = input.value;
+  const parts = date.split(".");
 
- let d=r(+p[0]), m=r(+p[1]), y=r(+p[2]);
+  if(parts.length !== 3){
+    alert("Введите дату в формате ДД.ММ.ГГГГ");
+    return;
+  }
 
- let destiny=r(d+m+y);
- let money=r(d+m);
- let love=r(m+y);
- let purpose=r(d+y);
+  const d = reduce(+parts[0]);
+  const m = reduce(+parts[1]);
+  const y = reduce(+parts[2]);
 
- const values=[destiny,money,love,purpose,d,m,y];
+  const destiny = reduce(d + m + y);
+  const money = reduce(d + m);
+  const love = reduce(m + y);
+  const purpose = reduce(d + y);
 
- // рисуем круг
- matrix.innerHTML="";
- matrix.classList.remove("hidden");
+  const values = [destiny, money, love, purpose, d, m, y];
 
- const pos=[
- [110,0],[200,60],[200,160],[110,220],
- [20,160],[20,60],[110,110]
- ];
+  // рисуем круг
+  matrix.innerHTML = "";
+  matrix.classList.remove("hidden");
 
- values.forEach((n,i)=>{
-   const el=document.createElement("div");
-   el.className="node";
+  const pos = [
+    [108, 0],
+    [200, 60],
+    [200, 160],
+    [108, 220],
+    [20, 160],
+    [20, 60],
+    [108, 110]
+  ];
+
+  values.forEach((n, i) => {
+    const el = document.createElement("div");
+    el.className = "node";
+    el.style.left = pos[i][0] + "px";
+    el.style.top = pos[i][1] + "px";
+    el.innerText = n;
+    matrix.appendChild(el);
+  });
+
+  // карточки
+  function block(title, n){
+    const a = A[n];
+    return `
+      <div class="card">
+        <h3>${title}: ${n}</h3>
+        <b>${a[0]}</b><br><br>
+        <span class="plus">Плюс: ${a[1]}</span><br>
+        <span class="minus">Минус: ${a[2]}</span>
+      </div>
+    `;
+  }
+
+  info.innerHTML =
+    block("Судьба", destiny) +
+    block("Деньги", money) +
+    block("Отношения", love) +
+    block("Предназначение", purpose);
+
+});
+</script>
+
+</body>
+</html>
