@@ -2,22 +2,19 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Матрица судьбы PRO+</title>
+<title>Матрица судьбы PRO MAX</title>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
   margin: 0;
+  background: #f5f5f7;
   font-family: -apple-system, sans-serif;
-  background: #0f0f11;
-  color: white;
 }
 
 .app {
-  padding: 20px;
   max-width: 420px;
   margin: auto;
+  padding: 20px;
 }
 
 h1 { text-align: center; }
@@ -25,94 +22,74 @@ h1 { text-align: center; }
 input, button {
   width: 100%;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   border: none;
   margin-top: 10px;
-}
-
-input {
-  background: #1c1c1e;
-  color: white;
+  font-size: 16px;
 }
 
 button {
   background: #007aff;
   color: white;
-  font-weight: bold;
 }
 
 /* круг */
 .circle {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 320px;
+  height: 320px;
   margin: 30px auto;
   border-radius: 50%;
-  border: 2px solid #444;
+  border: 2px solid #d2c2a3;
 }
 
 /* линии */
 .line {
   position: absolute;
-  background: rgba(255,255,255,0.2);
+  background: #d2c2a3;
 }
 
-.line-h {
-  height: 2px;
-  width: 100%;
-  top: 50%;
-}
-
-.line-v {
-  width: 2px;
-  height: 100%;
-  left: 50%;
-}
-
-.line-d1 {
-  width: 2px;
-  height: 100%;
-  transform: rotate(45deg);
-  left: 50%;
-}
-
-.line-d2 {
-  width: 2px;
-  height: 100%;
-  transform: rotate(-45deg);
-  left: 50%;
-}
+.h { width:100%; height:1px; top:50%; }
+.v { height:100%; width:1px; left:50%; }
+.d1 { height:100%; width:1px; transform:rotate(45deg); left:50%; }
+.d2 { height:100%; width:1px; transform:rotate(-45deg); left:50%; }
 
 /* точки */
 .node {
   position: absolute;
-  width: 46px;
-  height: 46px;
-  background: #1c1c1e;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:bold;
 }
 
-/* центр */
+/* цвета как на картинке */
+.c1 { background:#cfd8dc; }
+.c2 { background:#b0bec5; }
+.c3 { background:#aed581; }
+.c4 { background:#ffcc80; }
+.c5 { background:#ef9a9a; }
+.c6 { background:#d1c4e9; }
+
 .center {
-  background: #007aff;
+  width:50px;
+  height:50px;
+  font-size:16px;
 }
 
 /* карточки */
 .card {
-  background: #1c1c1e;
-  padding: 15px;
-  border-radius: 18px;
-  margin-top: 15px;
+  background:white;
+  border-radius:12px;
+  padding:15px;
+  margin-top:15px;
 }
 
-.plus { color: #4cd964; }
-.minus { color: #ff3b30; }
-
-.hidden { display: none; }
+.hidden { display:none; }
 
 </style>
 </head>
@@ -124,15 +101,13 @@ button {
 <h1>Матрица судьбы</h1>
 
 <input id="dateInput" placeholder="ДД.ММ.ГГГГ">
-<button id="calcBtn">Рассчитать</button>
+<button id="btn">Рассчитать</button>
 
 <div id="matrix" class="circle hidden">
-
-  <div class="line line-h"></div>
-  <div class="line line-v"></div>
-  <div class="line line-d1"></div>
-  <div class="line line-d2"></div>
-
+  <div class="line h"></div>
+  <div class="line v"></div>
+  <div class="line d1"></div>
+  <div class="line d2"></div>
 </div>
 
 <div id="info"></div>
@@ -141,112 +116,100 @@ button {
 
 <script>
 
-const input = document.getElementById("dateInput");
-const button = document.getElementById("calcBtn");
-const matrix = document.getElementById("matrix");
-const info = document.getElementById("info");
-
 // автоформат
-input.addEventListener("input", (e)=>{
+dateInput.addEventListener("input", e=>{
  let v=e.target.value.replace(/\D/g,"");
  if(v.length>2)v=v.slice(0,2)+"."+v.slice(2);
  if(v.length>5)v=v.slice(0,5)+"."+v.slice(5,9);
  e.target.value=v;
 });
 
-// арканы
-const A = {
-1:["Маг","Лидерство","Манипуляции"],
-2:["Жрица","Интуиция","Страх"],
-3:["Императрица","Творчество","Лень"],
-4:["Император","Сила","Контроль"],
-5:["Иерофант","Знания","Догмы"],
-6:["Любовь","Гармония","Зависимость"],
-7:["Колесница","Победа","Агрессия"],
-8:["Баланс","Справедливость","Критика"],
-9:["Отшельник","Мудрость","Одиночество"],
-10:["Фортуна","Удача","Нестабильность"],
-11:["Сила","Энергия","Гнев"],
-12:["Жертва","Рост","Застой"],
-13:["Трансформация","Обновление","Страх"],
-14:["Баланс","Гармония","Пассивность"],
-15:["Деньги","Сила","Зависимости"],
-16:["Кризис","Перезапуск","Разрушение"],
-17:["Звезда","Мечта","Иллюзии"],
-18:["Луна","Интуиция","Тревога"],
-19:["Солнце","Успех","Эго"],
-20:["Суд","Пробуждение","Страх"],
-21:["Мир","Завершение","Застой"],
-22:["Шут","Свобода","Хаос"]
-};
-
-function reduce(n){
+// редукция
+function r(n){
  while(n>22)n=[...n+""].reduce((a,b)=>a+ +b,0);
  return n;
 }
 
-// расчёт
-button.addEventListener("click", ()=>{
+// расчет
+btn.onclick=()=>{
 
- const p=input.value.split(".");
+ let p=dateInput.value.split(".");
  if(p.length!==3){alert("Введите дату");return;}
 
- const d=reduce(+p[0]);
- const m=reduce(+p[1]);
- const y=reduce(+p[2]);
+ let d=r(+p[0]);
+ let m=r(+p[1]);
+ let y=r(+p[2]);
 
- const destiny=reduce(d+m+y);
- const money=reduce(d+m);
- const love=reduce(m+y);
- const purpose=reduce(d+y);
- const center=reduce(destiny+purpose);
+ let destiny=r(d+m+y);
+ let purpose=r(d+y);
+ let money=r(d+m);
+ let love=r(m+y);
 
- const values=[destiny,money,love,purpose,d,m,y,center];
+ let center=r(destiny+purpose);
 
- matrix.innerHTML += ""; // не стираем линии
- matrix.querySelectorAll(".node").forEach(n=>n.remove());
+ // дополнительные точки (приближение к схеме)
+ let t1=r(destiny+money);
+ let t2=r(destiny+love);
+ let t3=r(purpose+money);
+ let t4=r(purpose+love);
 
  matrix.classList.remove("hidden");
+ matrix.querySelectorAll(".node").forEach(n=>n.remove());
 
- const pos=[
- [127,0],
- [230,70],
- [230,190],
- [127,250],
- [20,190],
- [20,70],
- [127,127],
- [127,127] // центр
+ // позиции (как на картинке)
+ const pos = [
+  [140,0],    // верх
+  [260,70],   // правый верх
+  [260,200],  // правый низ
+  [140,280],  // низ
+  [20,200],   // левый низ
+  [20,70],    // левый верх
+  [140,140],  // центр
+
+  [90,90],
+  [200,90],
+  [200,200],
+  [90,200]
+ ];
+
+ const values = [
+  destiny,
+  money,
+  love,
+  purpose,
+  d,
+  m,
+  center,
+  t1,
+  t2,
+  t3,
+  t4
+ ];
+
+ const colors = [
+  "c6","c4","c5","c4","c2","c2","c3",
+  "c2","c2","c4","c5"
  ];
 
  values.forEach((n,i)=>{
-  const el=document.createElement("div");
-  el.className="node"+(i===7?" center":"");
+  let el=document.createElement("div");
+  el.className="node "+colors[i]+(i===6?" center":"");
   el.style.left=pos[i][0]+"px";
   el.style.top=pos[i][1]+"px";
   el.innerText=n;
   matrix.appendChild(el);
  });
 
- function block(title,n){
-  const a=A[n];
-  return `
-  <div class="card">
-    <h3>${title}: ${n}</h3>
-    <b>${a[0]}</b><br><br>
-    <span class="plus">Плюс: ${a[1]}</span><br>
-    <span class="minus">Минус: ${a[2]}</span>
-  </div>`;
- }
+ // инфо
+ info.innerHTML = `
+ <div class="card"><b>Судьба:</b> ${destiny}</div>
+ <div class="card"><b>Деньги:</b> ${money}</div>
+ <div class="card"><b>Любовь:</b> ${love}</div>
+ <div class="card"><b>Предназначение:</b> ${purpose}</div>
+ <div class="card"><b>Центр личности:</b> ${center}</div>
+ `;
+}
 
- info.innerHTML=
- block("Судьба",destiny)+
- block("Деньги (линия)",money)+
- block("Отношения (линия)",love)+
- block("Предназначение",purpose)+
- block("Ядро личности",center);
-
-});
 </script>
 
 </body>
