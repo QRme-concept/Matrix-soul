@@ -8,10 +8,9 @@
 body {
   margin: 0;
   background: #1c1c1e;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: -apple-system, sans-serif;
 }
 
-/* fullscreen app */
 .iphone {
   width: 100%;
   height: 100vh;
@@ -19,83 +18,51 @@ body {
   overflow: auto;
 }
 
-/* status bar */
 .status-bar {
   display: flex;
   justify-content: space-between;
   padding: 15px 20px;
-  font-size: 14px;
 }
 
-/* content */
 .app {
   padding: 20px;
 }
 
-h1 {
-  text-align: center;
-}
-
-/* cards */
 .card {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.95);
   padding: 15px;
   border-radius: 18px;
   margin-top: 15px;
 }
 
-/* input */
-input {
+input, button {
   width: 100%;
   padding: 12px;
   border-radius: 12px;
   border: none;
   margin-top: 10px;
-  font-size: 16px;
 }
 
-/* button */
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 10px;
   background: #007aff;
   color: white;
-  border: none;
-  border-radius: 14px;
-  font-size: 16px;
 }
 
-/* result */
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 .big-number {
-  font-size: 50px;
-  text-align: center;
-  font-weight: bold;
-}
-
-/* matrix */
-.matrix {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.matrix div {
-  background: white;
-  padding: 12px;
-  border-radius: 12px;
+  font-size: 48px;
   text-align: center;
 }
 
-/* meanings */
 .meaning {
-  margin-top: 10px;
   font-size: 14px;
+  margin-top: 10px;
 }
+
+.plus { color: green; }
+.minus { color: red; }
+
 </style>
 </head>
 
@@ -109,11 +76,10 @@ button {
   </div>
 
   <div class="app">
-    <h1>Матрица судьбы</h1>
+    <h2>Матрица судьбы</h2>
 
     <div class="card">
-      <label>Дата рождения</label>
-      <input id="dateInput" placeholder="ДД.ММ.ГГГГ" maxlength="10">
+      <input id="dateInput" placeholder="ДД.ММ.ГГГГ">
     </div>
 
     <button id="calcBtn">Рассчитать</button>
@@ -121,113 +87,151 @@ button {
     <div id="result" class="hidden">
 
       <div class="card">
-        <h3>Число судьбы</h3>
         <div class="big-number" id="destiny"></div>
-        <div class="meaning" id="destinyMeaning"></div>
-      </div>
-
-      <div class="card">
-        <h3>Матрица</h3>
-        <div class="matrix" id="matrix"></div>
+        <div id="desc" class="meaning"></div>
       </div>
 
     </div>
-
   </div>
 </div>
 
 <script>
 
-// 🔥 время как на iPhone
-function updateTime() {
+// время
+setInterval(()=>{
   const now = new Date();
-  const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  document.getElementById("time").innerText = time;
-}
-setInterval(updateTime, 1000);
-updateTime();
+  document.getElementById("time").innerText =
+    now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+},1000);
 
-// 🔥 автоформат даты
-const input = document.getElementById("dateInput");
-
-input.addEventListener("input", (e) => {
-  let v = e.target.value.replace(/\D/g, "");
-
-  if (v.length > 2) v = v.slice(0,2) + "." + v.slice(2);
-  if (v.length > 5) v = v.slice(0,5) + "." + v.slice(5,9);
-
-  e.target.value = v;
+// автоформат
+dateInput.addEventListener("input", e=>{
+  let v = e.target.value.replace(/\D/g,"");
+  if(v.length>2) v=v.slice(0,2)+"."+v.slice(2);
+  if(v.length>5) v=v.slice(0,5)+"."+v.slice(5,9);
+  e.target.value=v;
 });
 
-// 🔢 значения (расшифровка)
-const meanings = {
-  1: "Лидерство, сила воли",
-  2: "Интуиция, чувствительность",
-  3: "Творчество, самовыражение",
-  4: "Стабильность, труд",
-  5: "Свобода, перемены",
-  6: "Любовь, семья",
-  7: "Духовность, поиск истины",
-  8: "Сила, деньги, контроль",
-  9: "Мудрость, завершение",
-  10: "Удача, поток",
-  11: "Сила духа",
-  12: "Жертвенность",
-  13: "Трансформация",
-  14: "Баланс",
-  15: "Искушение",
-  16: "Разрушение старого",
-  17: "Надежда",
-  18: "Подсознание",
-  19: "Успех",
-  20: "Пробуждение",
-  21: "Завершение",
-  22: "Свобода души"
+// база арканов
+const arcana = {
+
+1:{name:"Маг",
+plus:"Лидер, инициатор, умеет создавать реальность, сильная воля и интеллект.",
+minus:"Манипуляции, эгоизм, давление на людей, желание контролировать всё."},
+
+2:{name:"Жрица",
+plus:"Интуиция, глубина, мудрость, чувствительность к энергиям.",
+minus:"Закрытость, страхи, пассивность, уход в иллюзии."},
+
+3:{name:"Императрица",
+plus:"Творчество, изобилие, забота, женская энергия.",
+minus:"Лень, зависимость от комфорта, капризность."},
+
+4:{name:"Император",
+plus:"Сила, структура, ответственность, умение управлять.",
+minus:"Жёсткость, контроль, тирания."},
+
+5:{name:"Иерофант",
+plus:"Мудрость, наставничество, духовность, знания.",
+minus:"Догмы, ограниченность мышления."},
+
+6:{name:"Влюблённые",
+plus:"Любовь, выбор, гармония, отношения.",
+minus:"Зависимость, сомнения, страх выбора."},
+
+7:{name:"Колесница",
+plus:"Цель, движение, победа, сила характера.",
+minus:"Агрессия, спешка, давление."},
+
+8:{name:"Справедливость",
+plus:"Баланс, честность, карма.",
+minus:"Осуждение, критика, холодность."},
+
+9:{name:"Отшельник",
+plus:"Мудрость, самопознание, глубина.",
+minus:"Одиночество, закрытость."},
+
+10:{name:"Колесо Фортуны",
+plus:"Удача, поток, перемены.",
+minus:"Нестабильность, зависимость от обстоятельств."},
+
+11:{name:"Сила",
+plus:"Внутренняя мощь, харизма, энергия.",
+minus:"Гнев, подавление."},
+
+12:{name:"Повешенный",
+plus:"Переосмысление, духовный рост.",
+minus:"Жертвенность, застой."},
+
+13:{name:"Смерть",
+plus:"Трансформация, обновление.",
+minus:"Страх перемен, разрушение."},
+
+14:{name:"Умеренность",
+plus:"Баланс, гармония, спокойствие.",
+minus:"Пассивность, затягивание."},
+
+15:{name:"Дьявол",
+plus:"Сила желаний, деньги, энергия.",
+minus:"Зависимости, искушения."},
+
+16:{name:"Башня",
+plus:"Освобождение, перезагрузка.",
+minus:"Кризисы, разрушения."},
+
+17:{name:"Звезда",
+plus:"Надежда, вдохновение, мечты.",
+minus:"Иллюзии, отрыв от реальности."},
+
+18:{name:"Луна",
+plus:"Интуиция, подсознание.",
+minus:"Страхи, тревожность."},
+
+19:{name:"Солнце",
+plus:"Успех, радость, энергия.",
+minus:"Гордыня, эго."},
+
+20:{name:"Суд",
+plus:"Пробуждение, миссия.",
+minus:"Страх перемен."},
+
+21:{name:"Мир",
+plus:"Завершение, гармония.",
+minus:"Застой."},
+
+22:{name:"Шут",
+plus:"Свобода, лёгкость, новый путь.",
+minus:"Безответственность, хаос."}
+
 };
 
-// уменьшение
-function reduceTo22(num) {
-  while (num > 22) {
-    num = num.toString().split("").reduce((s, d) => s + +d, 0);
-  }
-  return num;
-}
-
 // расчёт
-document.getElementById("calcBtn").addEventListener("click", () => {
+calcBtn.onclick = ()=>{
 
-  const date = input.value;
-  const parts = date.split(".");
+  const parts = dateInput.value.split(".");
+  if(parts.length!==3){alert("Введите дату");return;}
 
-  if (parts.length !== 3) {
-    alert("Введите дату правильно");
-    return;
+  let d=+parts[0], m=+parts[1], y=+parts[2];
+
+  function reduce(n){
+    while(n>22) n=[...n+""].reduce((a,b)=>a+ +b,0);
+    return n;
   }
 
-  const d = reduceTo22(+parts[0]);
-  const m = reduceTo22(+parts[1]);
-  const y = reduceTo22(+parts[2]);
+  const destiny = reduce(reduce(d)+reduce(m)+reduce(y));
 
-  const destiny = reduceTo22(d + m + y);
+  const a = arcana[destiny];
 
-  document.getElementById("destiny").innerText = destiny;
-  document.getElementById("destinyMeaning").innerText =
-    meanings[destiny] || "Описание отсутствует";
+  destiny.innerText = destiny;
 
-  const matrix = [d, m, y, destiny];
+  desc.innerHTML = `
+    <b>${a.name}</b><br><br>
+    <span class="plus">Плюс: ${a.plus}</span><br><br>
+    <span class="minus">Минус: ${a.minus}</span>
+  `;
 
-  const box = document.getElementById("matrix");
-  box.innerHTML = "";
-
-  matrix.forEach(n => {
-    const div = document.createElement("div");
-    div.innerHTML = `<b>${n}</b><br><small>${meanings[n] || ""}</small>`;
-    box.appendChild(div);
-  });
-
-  document.getElementById("result").classList.remove("hidden");
-
-});
+  result.classList.remove("hidden");
+};
 
 </script>
 
