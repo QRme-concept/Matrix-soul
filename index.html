@@ -2,12 +2,10 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Матрица судьбы PRO</title>
+<title>Матрица судьбы PRO+</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -22,9 +20,7 @@ body {
   margin: auto;
 }
 
-h1 {
-  text-align: center;
-}
+h1 { text-align: center; }
 
 input, button {
   width: 100%;
@@ -32,7 +28,6 @@ input, button {
   border-radius: 14px;
   border: none;
   margin-top: 10px;
-  font-size: 16px;
 }
 
 input {
@@ -49,23 +44,61 @@ button {
 /* круг */
 .circle {
   position: relative;
-  width: 260px;
-  height: 260px;
+  width: 300px;
+  height: 300px;
   margin: 30px auto;
   border-radius: 50%;
   border: 2px solid #444;
 }
 
+/* линии */
+.line {
+  position: absolute;
+  background: rgba(255,255,255,0.2);
+}
+
+.line-h {
+  height: 2px;
+  width: 100%;
+  top: 50%;
+}
+
+.line-v {
+  width: 2px;
+  height: 100%;
+  left: 50%;
+}
+
+.line-d1 {
+  width: 2px;
+  height: 100%;
+  transform: rotate(45deg);
+  left: 50%;
+}
+
+.line-d2 {
+  width: 2px;
+  height: 100%;
+  transform: rotate(-45deg);
+  left: 50%;
+}
+
+/* точки */
 .node {
   position: absolute;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   background: #1c1c1e;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+}
+
+/* центр */
+.center {
+  background: #007aff;
 }
 
 /* карточки */
@@ -93,126 +126,125 @@ button {
 <input id="dateInput" placeholder="ДД.ММ.ГГГГ">
 <button id="calcBtn">Рассчитать</button>
 
-<div id="matrix" class="circle hidden"></div>
+<div id="matrix" class="circle hidden">
+
+  <div class="line line-h"></div>
+  <div class="line line-v"></div>
+  <div class="line line-d1"></div>
+  <div class="line line-d2"></div>
+
+</div>
+
 <div id="info"></div>
 
 </div>
 
 <script>
 
-// элементы
 const input = document.getElementById("dateInput");
 const button = document.getElementById("calcBtn");
 const matrix = document.getElementById("matrix");
 const info = document.getElementById("info");
 
-// автоформат даты
-input.addEventListener("input", (e) => {
-  let v = e.target.value.replace(/\D/g, "");
-
-  if (v.length > 2) v = v.slice(0, 2) + "." + v.slice(2);
-  if (v.length > 5) v = v.slice(0, 5) + "." + v.slice(5, 9);
-
-  e.target.value = v;
+// автоформат
+input.addEventListener("input", (e)=>{
+ let v=e.target.value.replace(/\D/g,"");
+ if(v.length>2)v=v.slice(0,2)+"."+v.slice(2);
+ if(v.length>5)v=v.slice(0,5)+"."+v.slice(5,9);
+ e.target.value=v;
 });
 
 // арканы
 const A = {
-1:["Маг","Инициатива, лидерство","Манипуляции, эго"],
-2:["Жрица","Интуиция, глубина","Страхи, закрытость"],
-3:["Императрица","Изобилие, творчество","Лень, излишества"],
-4:["Император","Структура, власть","Контроль, жесткость"],
-5:["Иерофант","Знания, духовность","Догматизм"],
-6:["Влюбленные","Любовь, гармония","Зависимость"],
-7:["Колесница","Движение, победа","Агрессия"],
-8:["Справедливость","Баланс","Критика"],
+1:["Маг","Лидерство","Манипуляции"],
+2:["Жрица","Интуиция","Страх"],
+3:["Императрица","Творчество","Лень"],
+4:["Император","Сила","Контроль"],
+5:["Иерофант","Знания","Догмы"],
+6:["Любовь","Гармония","Зависимость"],
+7:["Колесница","Победа","Агрессия"],
+8:["Баланс","Справедливость","Критика"],
 9:["Отшельник","Мудрость","Одиночество"],
 10:["Фортуна","Удача","Нестабильность"],
 11:["Сила","Энергия","Гнев"],
-12:["Повешенный","Переосмысление","Жертва"],
-13:["Смерть","Трансформация","Страх перемен"],
-14:["Умеренность","Гармония","Пассивность"],
-15:["Дьявол","Деньги, сила","Зависимости"],
-16:["Башня","Перезапуск","Кризис"],
-17:["Звезда","Надежда","Иллюзии"],
-18:["Луна","Интуиция","Тревоги"],
+12:["Жертва","Рост","Застой"],
+13:["Трансформация","Обновление","Страх"],
+14:["Баланс","Гармония","Пассивность"],
+15:["Деньги","Сила","Зависимости"],
+16:["Кризис","Перезапуск","Разрушение"],
+17:["Звезда","Мечта","Иллюзии"],
+18:["Луна","Интуиция","Тревога"],
 19:["Солнце","Успех","Эго"],
 20:["Суд","Пробуждение","Страх"],
 21:["Мир","Завершение","Застой"],
 22:["Шут","Свобода","Хаос"]
 };
 
-// редукция
 function reduce(n){
-  while(n > 22){
-    n = n.toString().split("").reduce((a,b)=>a + +b, 0);
-  }
-  return n;
+ while(n>22)n=[...n+""].reduce((a,b)=>a+ +b,0);
+ return n;
 }
 
 // расчёт
-button.addEventListener("click", () => {
+button.addEventListener("click", ()=>{
 
-  const date = input.value;
-  const parts = date.split(".");
+ const p=input.value.split(".");
+ if(p.length!==3){alert("Введите дату");return;}
 
-  if(parts.length !== 3){
-    alert("Введите дату в формате ДД.ММ.ГГГГ");
-    return;
-  }
+ const d=reduce(+p[0]);
+ const m=reduce(+p[1]);
+ const y=reduce(+p[2]);
 
-  const d = reduce(+parts[0]);
-  const m = reduce(+parts[1]);
-  const y = reduce(+parts[2]);
+ const destiny=reduce(d+m+y);
+ const money=reduce(d+m);
+ const love=reduce(m+y);
+ const purpose=reduce(d+y);
+ const center=reduce(destiny+purpose);
 
-  const destiny = reduce(d + m + y);
-  const money = reduce(d + m);
-  const love = reduce(m + y);
-  const purpose = reduce(d + y);
+ const values=[destiny,money,love,purpose,d,m,y,center];
 
-  const values = [destiny, money, love, purpose, d, m, y];
+ matrix.innerHTML += ""; // не стираем линии
+ matrix.querySelectorAll(".node").forEach(n=>n.remove());
 
-  // рисуем круг
-  matrix.innerHTML = "";
-  matrix.classList.remove("hidden");
+ matrix.classList.remove("hidden");
 
-  const pos = [
-    [108, 0],
-    [200, 60],
-    [200, 160],
-    [108, 220],
-    [20, 160],
-    [20, 60],
-    [108, 110]
-  ];
+ const pos=[
+ [127,0],
+ [230,70],
+ [230,190],
+ [127,250],
+ [20,190],
+ [20,70],
+ [127,127],
+ [127,127] // центр
+ ];
 
-  values.forEach((n, i) => {
-    const el = document.createElement("div");
-    el.className = "node";
-    el.style.left = pos[i][0] + "px";
-    el.style.top = pos[i][1] + "px";
-    el.innerText = n;
-    matrix.appendChild(el);
-  });
+ values.forEach((n,i)=>{
+  const el=document.createElement("div");
+  el.className="node"+(i===7?" center":"");
+  el.style.left=pos[i][0]+"px";
+  el.style.top=pos[i][1]+"px";
+  el.innerText=n;
+  matrix.appendChild(el);
+ });
 
-  // карточки
-  function block(title, n){
-    const a = A[n];
-    return `
-      <div class="card">
-        <h3>${title}: ${n}</h3>
-        <b>${a[0]}</b><br><br>
-        <span class="plus">Плюс: ${a[1]}</span><br>
-        <span class="minus">Минус: ${a[2]}</span>
-      </div>
-    `;
-  }
+ function block(title,n){
+  const a=A[n];
+  return `
+  <div class="card">
+    <h3>${title}: ${n}</h3>
+    <b>${a[0]}</b><br><br>
+    <span class="plus">Плюс: ${a[1]}</span><br>
+    <span class="minus">Минус: ${a[2]}</span>
+  </div>`;
+ }
 
-  info.innerHTML =
-    block("Судьба", destiny) +
-    block("Деньги", money) +
-    block("Отношения", love) +
-    block("Предназначение", purpose);
+ info.innerHTML=
+ block("Судьба",destiny)+
+ block("Деньги (линия)",money)+
+ block("Отношения (линия)",love)+
+ block("Предназначение",purpose)+
+ block("Ядро личности",center);
 
 });
 </script>
