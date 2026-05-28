@@ -2,94 +2,220 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Матрица судьбы</title>
 
 <style>
-* { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  background: #f5f5f7;
-  font-family: -apple-system, sans-serif;
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
-.app {
-  max-width: 420px;
-  margin: auto;
-  padding: 20px;
+body{
+background:#f5f5f7;
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+color:#222;
+padding:20px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 10px;
+.app{
+max-width:430px;
+margin:auto;
 }
 
-/* одинаковый размер */
-input, button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  margin-top: 10px;
-  font-size: 16px;
+h1{
+font-size:34px;
+font-weight:700;
+margin-bottom:20px;
 }
 
-input {
-  background: white;
+input,button{
+width:100%;
+height:56px;
+border:none;
+border-radius:16px;
+font-size:18px;
 }
 
-button {
-  background: #007aff;
-  color: white;
-  font-weight: bold;
+input{
+padding:0 16px;
+background:white;
+margin-bottom:12px;
 }
 
-/* матрица */
-.circle {
-  position: relative;
-  width: 320px;
-  height: 320px;
-  margin: 30px auto;
-  border-radius: 50%;
-  border: 2px solid #d2c2a3;
+button{
+background:linear-gradient(135deg,#6c4cff,#8f6bff);
+color:white;
+font-weight:700;
+margin-bottom:25px;
 }
 
-/* скрыто */
-.hidden { display: none; }
-
-/* точки */
-.node {
-  position: absolute;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  color:#000;
+.hidden{
+display:none;
 }
 
-.left { background:#d1c4e9; }
-.top { background:#d1c4e9; }
-.right { background:#ef9a9a; }
-.bottom { background:#ef9a9a; }
-.center { background:#ffe082; width:54px;height:54px; }
+/* MATRIX */
 
-/* блоки */
-.card {
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 12px;
-  color: #000;
+.matrix{
+position:relative;
+width:360px;
+height:360px;
+margin:0 auto 30px;
 }
 
-.purple { background:#ede7f6; }
-.red { background:#ffebee; }
-.yellow { background:#fff8e1; }
+.circle{
+position:absolute;
+inset:0;
+border:2px solid #c9b89c;
+border-radius:50%;
+}
 
-.plus { color:green; }
-.minus { color:red; }
+.line{
+position:absolute;
+background:#c9b89c;
+}
+
+.h{
+width:280px;
+height:1px;
+left:40px;
+top:180px;
+}
+
+.v{
+height:280px;
+width:1px;
+left:180px;
+top:40px;
+}
+
+.d1{
+width:1px;
+height:300px;
+left:180px;
+top:30px;
+transform:rotate(45deg);
+}
+
+.d2{
+width:1px;
+height:300px;
+left:180px;
+top:30px;
+transform:rotate(-45deg);
+}
+
+.node{
+position:absolute;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+color:#222;
+}
+
+/* основные */
+
+.left{
+width:70px;
+height:70px;
+background:#d8cae8;
+left:0;
+top:145px;
+}
+
+.top{
+width:70px;
+height:70px;
+background:#d8cae8;
+left:145px;
+top:0;
+}
+
+.right{
+width:70px;
+height:70px;
+background:#f3aaa5;
+right:0;
+top:145px;
+}
+
+.bottom{
+width:70px;
+height:70px;
+background:#f3aaa5;
+left:145px;
+bottom:0;
+}
+
+.center{
+width:72px;
+height:72px;
+background:#b9c9ad;
+left:144px;
+top:144px;
+font-size:30px;
+}
+
+/* дополнительные */
+
+.blue{
+width:46px;
+height:46px;
+background:#b7ceda;
+font-size:20px;
+}
+
+.light{
+width:46px;
+height:46px;
+background:#d4e4ef;
+font-size:20px;
+}
+
+/* карточки */
+
+.card{
+padding:18px;
+border-radius:22px;
+margin-bottom:14px;
+line-height:1.5;
+}
+
+.card h3{
+margin-bottom:10px;
+font-size:22px;
+}
+
+.purpleCard{
+background:#efe7f8;
+}
+
+.redCard{
+background:#fde8e6;
+}
+
+.yellowCard{
+background:#fff3cc;
+}
+
+.blueCard{
+background:#e2eef5;
+}
+
+.plus{
+color:#2e7d32;
+font-weight:600;
+}
+
+.minus{
+color:#c62828;
+font-weight:600;
+}
 
 </style>
 </head>
@@ -100,10 +226,27 @@ button {
 
 <h1>Матрица судьбы</h1>
 
-<input id="dateInput" placeholder="ДД.ММ.ГГГГ">
-<button id="btn">Рассчитать</button>
+<input 
+id="dateInput" 
+placeholder="ДД.ММ.ГГГГ"
+maxlength="10"
+/>
 
-<div id="matrix" class="circle hidden"></div>
+<button id="calcBtn">
+Рассчитать
+</button>
+
+<div id="matrix" class="matrix hidden">
+
+<div class="circle"></div>
+
+<div class="line h"></div>
+<div class="line v"></div>
+<div class="line d1"></div>
+<div class="line d2"></div>
+
+</div>
+
 <div id="info"></div>
 
 </div>
@@ -111,108 +254,382 @@ button {
 <script>
 
 // автоформат даты
-dateInput.addEventListener("input", e=>{
- let v=e.target.value.replace(/\D/g,"");
- if(v.length>2)v=v.slice(0,2)+"."+v.slice(2);
- if(v.length>5)v=v.slice(0,5)+"."+v.slice(5,9);
- e.target.value=v;
+
+dateInput.addEventListener("input",e=>{
+
+let v=e.target.value.replace(/\D/g,"");
+
+if(v.length>2){
+v=v.slice(0,2)+"."+v.slice(2);
+}
+
+if(v.length>5){
+v=v.slice(0,5)+"."+v.slice(5,9);
+}
+
+e.target.value=v;
+
 });
 
-// редукция до 22
-function reduce(n){
- while(n > 22){
-  n = n.toString().split("").reduce((a,b)=>a+ +b,0);
- }
- return n;
+// редукция
+
+function reduce(num){
+
+while(num>22){
+
+num=num
+.toString()
+.split("")
+.reduce((a,b)=>a+Number(b),0);
+
+}
+
+return num;
+
 }
 
 // энергии
-const E = {
-1:["Маг","Лидерство, инициатива","Манипуляции, эго"],
-2:["Жрица","Интуиция, глубина","Страхи, закрытость"],
-3:["Императрица","Творчество, изобилие","Лень"],
-4:["Император","Структура, сила","Контроль"],
-5:["Иерофант","Знания, наставник","Догмы"],
-6:["Влюблённые","Любовь, гармония","Зависимость"],
-7:["Колесница","Победа, цель","Агрессия"],
-8:["Справедливость","Баланс","Критика"],
-9:["Отшельник","Мудрость","Одиночество"],
-10:["Фортуна","Удача","Нестабильность"],
-11:["Сила","Энергия","Гнев"],
-12:["Повешенный","Рост","Жертва"],
-13:["Смерть","Трансформация","Страх"],
-14:["Умеренность","Гармония","Пассивность"],
-15:["Дьявол","Деньги","Зависимости"],
-16:["Башня","Перезапуск","Кризис"],
-17:["Звезда","Мечты","Иллюзии"],
-18:["Луна","Интуиция","Страхи"],
-19:["Солнце","Успех","Эго"],
-20:["Суд","Пробуждение","Страх"],
-21:["Мир","Завершение","Застой"],
-22:["Шут","Свобода","Хаос"]
+
+const energies={
+
+1:["Маг","лидерство, инициатива","эгоизм, манипуляции"],
+2:["Жрица","интуиция, мудрость","страхи, закрытость"],
+3:["Императрица","творчество, изобилие","лень, инфантильность"],
+4:["Император","сила, структура","контроль, жесткость"],
+5:["Иерофант","знания, наставничество","догматизм"],
+6:["Влюблённые","любовь, гармония","зависимость"],
+7:["Колесница","движение, победа","агрессия"],
+8:["Справедливость","баланс","критика"],
+9:["Отшельник","мудрость","одиночество"],
+10:["Колесо Фортуны","удача","хаос"],
+11:["Сила","харизма, энергия","давление"],
+12:["Повешенный","духовный рост","жертвенность"],
+13:["Смерть","трансформация","страх перемен"],
+14:["Умеренность","гармония","пассивность"],
+15:["Дьявол","деньги, влияние","зависимости"],
+16:["Башня","перезагрузка","разрушение"],
+17:["Звезда","вдохновение","иллюзии"],
+18:["Луна","чувствительность","тревожность"],
+19:["Солнце","успех","гордыня"],
+20:["Суд","пробуждение","осуждение"],
+21:["Мир","завершение","застой"],
+22:["Шут","свобода","хаос"]
+
 };
 
-// расчёт
-btn.onclick = () => {
+// карточка
 
- let p = dateInput.value.split(".");
- if(p.length !== 3){
-  alert("Введите дату");
-  return;
- }
+function createCard(title,num,color,desc){
 
- let d = reduce(+p[0]);
- let m = reduce(+p[1]);
- let y = reduce(p[2].split("").reduce((a,b)=>a+ +b,0));
+const e=energies[num];
 
- let karma = reduce(d+m+y);
- let center = reduce(d+m+y+karma);
+return `
+<div class="card ${color}">
+<h3>${title} — ${num}</h3>
 
- matrix.innerHTML = "";
- matrix.classList.remove("hidden");
+<div><b>Аркан:</b> ${e[0]}</div><br>
 
- // позиции
- const pos = {
-  left:[0,140],
-  top:[140,0],
-  right:[280,140],
-  bottom:[140,280],
-  center:[133,133]
- };
+<div class="plus">
+Плюс: ${e[1]}
+</div><br>
 
- function add(val,cls,x,y){
-  let el=document.createElement("div");
-  el.className="node "+cls;
-  el.style.left=x+"px";
-  el.style.top=y+"px";
-  el.innerText=val;
-  matrix.appendChild(el);
- }
+<div class="minus">
+Минус: ${e[2]}
+</div>
 
- add(d,"left",...pos.left);
- add(m,"top",...pos.top);
- add(y,"right",...pos.right);
- add(karma,"bottom",...pos.bottom);
- add(center,"center",...pos.center);
+${desc ? `<br><div>${desc}</div>` : ""}
 
- function block(title,n,color){
-  let a=E[n];
-  return `
-  <div class="card ${color}">
-    <b>${title}: ${n}</b><br><br>
-    <span class="plus">Плюс: ${a[1]}</span><br><br>
-    <span class="minus">Минус: ${a[2]}</span>
-  </div>`;
- }
-
- info.innerHTML =
-  block("Визитная карточка (день)",d,"purple") +
-  block("Главный талант (месяц)",m,"purple") +
-  block("Материальная карма (год)",y,"red") +
-  block("Кармическая задача",karma,"red") +
-  block("Комфорт души (центр)",center,"yellow");
+</div>
+`;
 
 }
+
+// расчёт
+
+calcBtn.onclick=()=>{
+
+const val=dateInput.value;
+
+if(val.length!==10){
+
+alert("Введите дату");
+
+return;
+
+}
+
+const parts=val.split(".");
+
+let day=reduce(Number(parts[0]));
+let month=reduce(Number(parts[1]));
+
+let year=parts[2]
+.split("")
+.reduce((a,b)=>a+Number(b),0);
+
+year=reduce(year);
+
+// кармическая задача
+
+let karma=reduce(day+month+year);
+
+// центр
+
+let center=reduce(
+day+month+year+karma
+);
+
+// ДОП ТОЧКИ
+
+// ЛЕВАЯ
+
+let leftLight=reduce(day+center);
+
+let leftBlue=reduce(day+leftLight);
+
+// ВЕРХНЯЯ
+
+let topLight=reduce(month+center);
+
+let topBlue=reduce(month+topLight);
+
+// ПРАВАЯ
+
+let rightLight=reduce(year+center);
+
+let rightBlue=reduce(year+rightLight);
+
+// НИЖНЯЯ
+
+let bottomLight=reduce(karma+center);
+
+let bottomBlue=reduce(karma+bottomLight);
+
+// показать
+
+matrix.classList.remove("hidden");
+
+matrix.innerHTML=`
+
+<div class="circle"></div>
+
+<div class="line h"></div>
+<div class="line v"></div>
+<div class="line d1"></div>
+<div class="line d2"></div>
+
+<!-- основные -->
+
+<div class="node left">${day}</div>
+<div class="node top">${month}</div>
+<div class="node right">${year}</div>
+<div class="node bottom">${karma}</div>
+<div class="node center">${center}</div>
+
+<!-- лево -->
+
+<div 
+class="node blue"
+style="
+left:70px;
+top:157px;
+"
+>
+${leftBlue}
+</div>
+
+<div 
+class="node light"
+style="
+left:112px;
+top:157px;
+"
+>
+${leftLight}
+</div>
+
+<!-- верх -->
+
+<div 
+class="node blue"
+style="
+left:157px;
+top:72px;
+"
+>
+${topBlue}
+</div>
+
+<div 
+class="node light"
+style="
+left:157px;
+top:115px;
+"
+>
+${topLight}
+</div>
+
+<!-- право -->
+
+<div 
+class="node light"
+style="
+right:112px;
+top:157px;
+"
+>
+${rightLight}
+</div>
+
+<div 
+class="node blue"
+style="
+right:70px;
+top:157px;
+"
+>
+${rightBlue}
+</div>
+
+<!-- низ -->
+
+<div 
+class="node light"
+style="
+left:157px;
+bottom:112px;
+"
+>
+${bottomLight}
+</div>
+
+<div 
+class="node blue"
+style="
+left:157px;
+bottom:70px;
+"
+>
+${bottomBlue}
+</div>
+
+`;
+
+info.innerHTML=
+
+createCard(
+"Визитная карточка",
+day,
+"purpleCard"
+)
+
++
+
+createCard(
+"Главный талант",
+month,
+"purpleCard"
+)
+
++
+
+createCard(
+"Материальная карма",
+year,
+"redCard"
+)
+
++
+
+createCard(
+"Кармическая задача",
+karma,
+"redCard"
+)
+
++
+
+createCard(
+"Комфорт души",
+center,
+"yellowCard"
+)
+
++
+
+createCard(
+"Голубая точка слева",
+leftLight,
+"blueCard",
+`${day} + ${center} = ${leftLight}`
+)
+
++
+
+createCard(
+"Синяя точка слева",
+leftBlue,
+"blueCard",
+`${day} + ${leftLight} = ${leftBlue}`
+)
+
++
+
+createCard(
+"Голубая точка сверху",
+topLight,
+"blueCard",
+`${month} + ${center} = ${topLight}`
+)
+
++
+
+createCard(
+"Синяя точка сверху",
+topBlue,
+"blueCard",
+`${month} + ${topLight} = ${topBlue}`
+)
+
++
+
+createCard(
+"Голубая точка справа",
+rightLight,
+"blueCard",
+`${year} + ${center} = ${rightLight}`
+)
+
++
+
+createCard(
+"Синяя точка справа",
+rightBlue,
+"blueCard",
+`${year} + ${rightLight} = ${rightBlue}`
+)
+
++
+
+createCard(
+"Голубая точка снизу",
+bottomLight,
+"blueCard",
+`${karma} + ${center} = ${bottomLight}`
+)
+
++
+
+createCard(
+"Синяя точка снизу",
+bottomBlue,
+"blueCard",
+`${karma} + ${bottomLight} = ${bottomBlue}`
+);
+
+};
+
 </script>
 
 </body>
