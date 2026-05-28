@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>Матрица судьбы</title>
 
 <style>
 
 *{
-box-sizing:border-box;
 margin:0;
 padding:0;
+box-sizing:border-box;
 }
 
 body{
 background:#f5f5f7;
 font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-color:#222;
 padding:20px;
+color:#222;
 }
 
 .app{
@@ -30,34 +30,36 @@ h1{
 font-size:34px;
 font-weight:700;
 margin-bottom:20px;
+text-align:center;
 }
 
-input,button{
+input,
+button{
 width:100%;
 height:56px;
 border:none;
-border-radius:16px;
+border-radius:18px;
 font-size:18px;
 }
 
 input{
-padding:0 16px;
 background:white;
+padding:0 18px;
 margin-bottom:12px;
 }
 
 button{
-background:linear-gradient(135deg,#6c4cff,#8f6bff);
+background:#6c4cff;
 color:white;
 font-weight:700;
-margin-bottom:25px;
+margin-bottom:28px;
 }
 
 .hidden{
 display:none;
 }
 
-/* MATRIX */
+/* МАТРИЦА */
 
 .matrix{
 position:relative;
@@ -66,16 +68,20 @@ height:360px;
 margin:0 auto 30px;
 }
 
+/* круг */
+
 .circle{
 position:absolute;
 inset:0;
-border:2px solid #c9b89c;
+border:2px solid #cbb89b;
 border-radius:50%;
 }
 
+/* линии */
+
 .line{
 position:absolute;
-background:#c9b89c;
+background:#cbb89b;
 }
 
 .h{
@@ -86,8 +92,8 @@ top:180px;
 }
 
 .v{
-height:280px;
 width:1px;
+height:280px;
 left:180px;
 top:40px;
 }
@@ -108,6 +114,8 @@ top:30px;
 transform:rotate(-45deg);
 }
 
+/* кружки */
+
 .node{
 position:absolute;
 border-radius:50%;
@@ -115,66 +123,82 @@ display:flex;
 align-items:center;
 justify-content:center;
 font-weight:700;
-color:#222;
 }
 
 /* основные */
 
 .left{
-width:70px;
-height:70px;
+width:64px;
+height:64px;
 background:#d8cae8;
 left:0;
-top:145px;
+top:148px;
+font-size:28px;
 }
 
 .top{
-width:70px;
-height:70px;
+width:64px;
+height:64px;
 background:#d8cae8;
-left:145px;
+left:148px;
 top:0;
+font-size:28px;
 }
 
 .right{
-width:70px;
-height:70px;
+width:64px;
+height:64px;
 background:#f3aaa5;
 right:0;
-top:145px;
+top:148px;
+font-size:28px;
 }
 
 .bottom{
-width:70px;
-height:70px;
+width:64px;
+height:64px;
 background:#f3aaa5;
-left:145px;
+left:148px;
 bottom:0;
+font-size:28px;
 }
+
+/* центр */
 
 .center{
 width:72px;
 height:72px;
-background:#b9c9ad;
+background:#f5de8d;
 left:144px;
 top:144px;
 font-size:30px;
 }
 
-/* дополнительные */
+/* нейтральные */
 
-.blue{
-width:46px;
-height:46px;
-background:#b7ceda;
-font-size:20px;
+.neutral{
+width:40px;
+height:40px;
+background:#edf2f5;
+font-size:18px;
 }
 
+/* голубые */
+
 .light{
-width:46px;
-height:46px;
-background:#d4e4ef;
-font-size:20px;
+width:40px;
+height:40px;
+background:#c9dce7;
+font-size:18px;
+}
+
+/* оранжевые */
+
+.orange{
+width:40px;
+height:40px;
+background:#f6d2a3;
+font-size:18px;
 }
 
 /* карточки */
@@ -192,19 +216,19 @@ font-size:22px;
 }
 
 .purpleCard{
-background:#efe7f8;
+background:#f0e8f8;
 }
 
 .redCard{
-background:#fde8e6;
+background:#fde9e7;
 }
 
 .yellowCard{
-background:#fff3cc;
+background:#fff4cf;
 }
 
 .blueCard{
-background:#e2eef5;
+background:#e7f0f5;
 }
 
 .plus{
@@ -226,8 +250,8 @@ font-weight:600;
 
 <h1>Матрица судьбы</h1>
 
-<input 
-id="dateInput" 
+<input
+id="dateInput"
 placeholder="ДД.ММ.ГГГГ"
 maxlength="10"
 />
@@ -236,16 +260,7 @@ maxlength="10"
 Рассчитать
 </button>
 
-<div id="matrix" class="matrix hidden">
-
-<div class="circle"></div>
-
-<div class="line h"></div>
-<div class="line v"></div>
-<div class="line d1"></div>
-<div class="line d2"></div>
-
-</div>
+<div id="matrix" class="matrix hidden"></div>
 
 <div id="info"></div>
 
@@ -294,16 +309,16 @@ const energies={
 
 1:["Маг","лидерство, инициатива","эгоизм, манипуляции"],
 2:["Жрица","интуиция, мудрость","страхи, закрытость"],
-3:["Императрица","творчество, изобилие","лень, инфантильность"],
-4:["Император","сила, структура","контроль, жесткость"],
+3:["Императрица","творчество, изобилие","лень"],
+4:["Император","структура, сила","контроль"],
 5:["Иерофант","знания, наставничество","догматизм"],
 6:["Влюблённые","любовь, гармония","зависимость"],
 7:["Колесница","движение, победа","агрессия"],
 8:["Справедливость","баланс","критика"],
-9:["Отшельник","мудрость","одиночество"],
+9:["Отшельник","мудрость","закрытость"],
 10:["Колесо Фортуны","удача","хаос"],
-11:["Сила","харизма, энергия","давление"],
-12:["Повешенный","духовный рост","жертвенность"],
+11:["Сила","харизма","давление"],
+12:["Повешенный","рост души","жертвенность"],
 13:["Смерть","трансформация","страх перемен"],
 14:["Умеренность","гармония","пассивность"],
 15:["Дьявол","деньги, влияние","зависимости"],
@@ -319,25 +334,32 @@ const energies={
 
 // карточка
 
-function createCard(title,num,color,desc){
+function createCard(title,num,color,text){
 
 const e=energies[num];
 
 return `
 <div class="card ${color}">
+
 <h3>${title} — ${num}</h3>
 
-<div><b>Аркан:</b> ${e[0]}</div><br>
+<div>
+<b>Аркан:</b> ${e[0]}
+</div>
+
+<br>
 
 <div class="plus">
 Плюс: ${e[1]}
-</div><br>
+</div>
+
+<br>
 
 <div class="minus">
 Минус: ${e[2]}
 </div>
 
-${desc ? `<br><div>${desc}</div>` : ""}
+${text ? `<br><div>${text}</div>` : ""}
 
 </div>
 `;
@@ -360,7 +382,10 @@ return;
 
 const parts=val.split(".");
 
+// основные
+
 let day=reduce(Number(parts[0]));
+
 let month=reduce(Number(parts[1]));
 
 let year=parts[2]
@@ -369,7 +394,7 @@ let year=parts[2]
 
 year=reduce(year);
 
-// кармическая задача
+// низ
 
 let karma=reduce(day+month+year);
 
@@ -379,31 +404,29 @@ let center=reduce(
 day+month+year+karma
 );
 
-// ДОП ТОЧКИ
-
-// ЛЕВАЯ
+// ЛЕВО
 
 let leftLight=reduce(day+center);
 
-let leftBlue=reduce(day+leftLight);
+let leftNeutral=reduce(day+leftLight);
 
-// ВЕРХНЯЯ
+// ВЕРХ
 
 let topLight=reduce(month+center);
 
-let topBlue=reduce(month+topLight);
+let topNeutral=reduce(month+topLight);
 
-// ПРАВАЯ
+// ПРАВО
 
-let rightLight=reduce(year+center);
+let rightOrange=reduce(year+center);
 
-let rightBlue=reduce(year+rightLight);
+let rightNeutral=reduce(year+rightOrange);
 
-// НИЖНЯЯ
+// НИЗ
 
-let bottomLight=reduce(karma+center);
+let bottomOrange=reduce(karma+center);
 
-let bottomBlue=reduce(karma+bottomLight);
+let bottomNeutral=reduce(karma+bottomOrange);
 
 // показать
 
@@ -420,101 +443,117 @@ matrix.innerHTML=`
 
 <!-- основные -->
 
-<div class="node left">${day}</div>
-<div class="node top">${month}</div>
-<div class="node right">${year}</div>
-<div class="node bottom">${karma}</div>
-<div class="node center">${center}</div>
-
-<!-- лево -->
-
-<div 
-class="node blue"
-style="
-left:70px;
-top:157px;
-"
->
-${leftBlue}
+<div class="node left">
+${day}
 </div>
 
-<div 
+<div class="node top">
+${month}
+</div>
+
+<div class="node right">
+${year}
+</div>
+
+<div class="node bottom">
+${karma}
+</div>
+
+<div class="node center">
+${center}
+</div>
+
+<!-- ЛЕВО -->
+
+<div
+class="node neutral"
+style="
+left:74px;
+top:160px;
+"
+>
+${leftNeutral}
+</div>
+
+<div
 class="node light"
 style="
-left:112px;
-top:157px;
+left:114px;
+top:160px;
 "
 >
 ${leftLight}
 </div>
 
-<!-- верх -->
+<!-- ВЕРХ -->
 
-<div 
-class="node blue"
+<div
+class="node neutral"
 style="
-left:157px;
-top:72px;
+left:160px;
+top:74px;
 "
 >
-${topBlue}
+${topNeutral}
 </div>
 
-<div 
+<div
 class="node light"
 style="
-left:157px;
-top:115px;
+left:160px;
+top:114px;
 "
 >
 ${topLight}
 </div>
 
-<!-- право -->
+<!-- ПРАВО -->
 
-<div 
-class="node light"
+<div
+class="node orange"
 style="
-right:112px;
-top:157px;
+right:114px;
+top:160px;
 "
 >
-${rightLight}
+${rightOrange}
 </div>
 
-<div 
-class="node blue"
+<div
+class="node neutral"
 style="
-right:70px;
-top:157px;
+right:74px;
+top:160px;
 "
 >
-${rightBlue}
+${rightNeutral}
 </div>
 
-<!-- низ -->
+<!-- НИЗ -->
 
-<div 
-class="node light"
+<div
+class="node orange"
 style="
-left:157px;
-bottom:112px;
+left:160px;
+bottom:114px;
 "
 >
-${bottomLight}
+${bottomOrange}
 </div>
 
-<div 
-class="node blue"
+<div
+class="node neutral"
 style="
-left:157px;
-bottom:70px;
+left:160px;
+bottom:74px;
 "
 >
-${bottomBlue}
+${bottomNeutral}
 </div>
 
 `;
+
+// карточки
 
 info.innerHTML=
 
@@ -559,7 +598,7 @@ center,
 +
 
 createCard(
-"Голубая точка слева",
+"Левая голубая энергия",
 leftLight,
 "blueCard",
 `${day} + ${center} = ${leftLight}`
@@ -568,16 +607,16 @@ leftLight,
 +
 
 createCard(
-"Синяя точка слева",
-leftBlue,
+"Левая нейтральная энергия",
+leftNeutral,
 "blueCard",
-`${day} + ${leftLight} = ${leftBlue}`
+`${day} + ${leftLight} = ${leftNeutral}`
 )
 
 +
 
 createCard(
-"Голубая точка сверху",
+"Верхняя голубая энергия",
 topLight,
 "blueCard",
 `${month} + ${center} = ${topLight}`
@@ -586,46 +625,46 @@ topLight,
 +
 
 createCard(
-"Синяя точка сверху",
-topBlue,
+"Верхняя нейтральная энергия",
+topNeutral,
 "blueCard",
-`${month} + ${topLight} = ${topBlue}`
+`${month} + ${topLight} = ${topNeutral}`
 )
 
 +
 
 createCard(
-"Голубая точка справа",
-rightLight,
-"blueCard",
-`${year} + ${center} = ${rightLight}`
+"Правая оранжевая энергия",
+rightOrange,
+"yellowCard",
+`${year} + ${center} = ${rightOrange}`
 )
 
 +
 
 createCard(
-"Синяя точка справа",
-rightBlue,
-"blueCard",
-`${year} + ${rightLight} = ${rightBlue}`
+"Правая нейтральная энергия",
+rightNeutral,
+"yellowCard",
+`${year} + ${rightOrange} = ${rightNeutral}`
 )
 
 +
 
 createCard(
-"Голубая точка снизу",
-bottomLight,
-"blueCard",
-`${karma} + ${center} = ${bottomLight}`
+"Нижняя оранжевая энергия",
+bottomOrange,
+"yellowCard",
+`${karma} + ${center} = ${bottomOrange}`
 )
 
 +
 
 createCard(
-"Синяя точка снизу",
-bottomBlue,
-"blueCard",
-`${karma} + ${bottomLight} = ${bottomBlue}`
+"Нижняя нейтральная энергия",
+bottomNeutral,
+"yellowCard",
+`${karma} + ${bottomOrange} = ${bottomNeutral}`
 );
 
 };
