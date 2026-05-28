@@ -319,7 +319,7 @@ const energies={
 
 // карточка
 
-function createCard(title,num,color,text){
+function createCard(title,num,color){
 
 const e=energies[num];
 
@@ -343,8 +343,6 @@ return `
 <div class="minus">
 Минус: ${e[2]}
 </div>
-
-${text ? `<br><div>${text}</div>` : ""}
 
 </div>
 `;
@@ -579,37 +577,33 @@ center,
 +
 
 createCard(
-"Левая голубая энергия",
+"Отношения с детьми",
 leftLight,
-"blueCard",
-`${day} + ${center} = ${leftLight}`
+"blueCard"
 )
 
 +
 
 createCard(
-"Левая нейтральная энергия",
+"Направление деятельности",
 leftNeutral,
-"blueCard",
-`${day} + ${leftLight} = ${leftNeutral}`
+"blueCard"
 )
 
 +
 
 createCard(
-"Верхняя голубая энергия",
+"Коммуникация, проявленность и самовыражение",
 topLight,
-"blueCard",
-`${month} + ${center} = ${topLight}`
+"blueCard"
 )
 
 +
 
 createCard(
-"Верхняя нейтральная энергия",
+"Интеллект, тип мышления и взгляд на мир",
 topNeutral,
-"blueCard",
-`${month} + ${topLight} = ${topNeutral}`
+"blueCard"
 )
 
 +
@@ -617,8 +611,7 @@ topNeutral,
 createCard(
 "Правая оранжевая энергия",
 rightOrange,
-"yellowCard",
-`${year} + ${center} = ${rightOrange}`
+"yellowCard"
 )
 
 +
@@ -626,8 +619,7 @@ rightOrange,
 createCard(
 "Правая нейтральная энергия",
 rightNeutral,
-"yellowCard",
-`${year} + ${rightOrange} = ${rightNeutral}`
+"yellowCard"
 )
 
 +
@@ -635,8 +627,7 @@ rightNeutral,
 createCard(
 "Нижняя оранжевая энергия",
 bottomOrange,
-"yellowCard",
-`${karma} + ${center} = ${bottomOrange}`
+"yellowCard"
 )
 
 +
@@ -644,8 +635,7 @@ bottomOrange,
 createCard(
 "Нижняя нейтральная энергия",
 bottomNeutral,
-"yellowCard",
-`${karma} + ${bottomOrange} = ${bottomNeutral}`
+"yellowCard"
 );
 
 };
